@@ -1,38 +1,39 @@
-import { configureStore } from '@reduxjs/toolkit'
+import { configureStore } from '@reduxjs/toolkit';
 import {
-persistStore,
-persistReducer,
-FLUSH,
-REHYDRATE,
-PAUSE,
-PERSIST,
-PURGE,
-REGISTER,
-} from 'redux-persist'
-import storage from 'redux-persist/lib/storage'
+  persistStore,
+  persistReducer,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 
-import { currencyReducer } from './currency/currencySlice'
+import { currencyReducer } from './currency/currencySlice';
+import { filterReducer } from './filters/filterSlice';
 
 const persistConfig = {
-key: 'currency',
-version: 1,
-storage,
-whitelist: ["baseCurrency"]
-}
+  key: 'currency',
+  version: 1,
+  storage,
+  whitelist: ['baseCurrency'],
+};
 
-const persistedReducer = persistReducer(persistConfig, currencyReducer)
+const persistedReducer = persistReducer(persistConfig, currencyReducer);
 
 export const store = configureStore({
-  reducer: {currency: persistedReducer},   // місце state redux
-middleware: (getDefaultMiddleware) =>
+  reducer: { currency: persistedReducer, filter: filterReducer }, // місце створення state redux => useSelector()
+  middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
-    serializableCheck: {
+      serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-    },
+      },
     }),
-})
+});
 
-export const persistor = persistStore(store)
+export const persistor = persistStore(store);
 
 
 
